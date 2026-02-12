@@ -1,1 +1,22 @@
+name: Deploy to S3
 
+on:
+    push:
+        branches: [ master ]
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Upload to S3
+            - uses: actions/checkout@v2
+            
+              uses: jakejarvis/aws-s3-sync-action@master
+              
+              with:
+              args: --acl public-read --delete
+              env:
+                AWS_S3_BUCKET: amzn-s3-aziz2125
+                AWS_ACCESS_KEY_ID: ${{ secrets.AKIAVPOXLHHJIZESNYMF }}
+                AWS_SECRET_ACCESS_KEY_ID: ${{ secrets./NJrlVKh43+sl0N52C5Tw4QDGlOa0iU8UDH0iKn5 }}
+                AWS_REGION: 'us-east-1'
