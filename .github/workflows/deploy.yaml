@@ -1,22 +1,25 @@
-name: Deploy to S3
+name: Build and Deploy
 
 on:
-    push:
+    pull_request:
         branches: [ master ]
 
 jobs:
-    deploy:
+    build:
         runs-on: ubuntu-latest
         steps:
-            - name: Upload to S3
             - uses: actions/checkout@v2
-            
-              uses: jakejarvis/aws-s3-sync-action@master
-              
+            - name: Use Node.js
+              uses: actions/setup-node@v1
               with:
-              args: --acl public-read --delete
-              env:
-                AWS_S3_BUCKET: amzn-s3-aziz2125
-                AWS_ACCESS_KEY_ID: ${{ secrets.AKIAVPOXLHHJIZESNYMF }}
-                AWS_SECRET_ACCESS_KEY_ID: ${{ secrets./NJrlVKh43+sl0N52C5Tw4QDGlOa0iU8UDH0iKn5 }}
-                AWS_REGION: 'us-east-1'
+                node-version: 12
+              run: yarn install
+              run: yarn build
+              run: yarn test
+            - name: Push build to S3
+              uses: sai-sharan/aws-s3-sync-action@master
+              with:
+                access_key: ${{ secrets.ACCESS_KEY }}
+                secret_access_key: ${{ secrets.SECRET_ACCESS_KEY }}
+                region: 'us-east-1'
+                
