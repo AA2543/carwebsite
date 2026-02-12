@@ -1,25 +1,21 @@
-name: Build and Deploy
+name: Upload Website
 
 on:
-    pull_request:
-        branches: [ master ]
+    push:
+        branches: 
+           -master
 
 jobs:
-    build:
+    deploy:
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v2
-            - name: Use Node.js
-              uses: actions/setup-node@v1
+            - name: Upload to S3
+              uses: jakejarvis/aws-s3-sync-action@master
               with:
-                node-version: 12
-              run: yarn install
-              run: yarn build
-              run: yarn test
-            - name: Push build to S3
-              uses: sai-sharan/aws-s3-sync-action@master
-              with:
-                access_key: ${{ secrets.ACCESS_KEY }}
-                secret_access_key: ${{ secrets.SECRET_ACCESS_KEY }}
-                region: 'us-east-1'
+                args: --acl public-read --follow-symlinks --delete
+              env:
+                AWS_S3_BUCKET: ${{ secrets.AWS_S3-BUCKET }}
+                AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                AWS_REGION: 'us-east-1'
                 
