@@ -2,17 +2,34 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone') {
+
+        stage('Checkout Code') {
             steps {
-                git 'https://github.com/AA2543/carwebsite.git'
+                git branch: 'master', 
+                url: 'https://github.com/AA2543/carwebsite.git'
             }
         }
 
         stage('Deploy to Apache') {
             steps {
-                sh 'sudo cp -r * /var/www/html/'
+                sh '''
+                    rm -rf /var/www/html/*
+                    cp -r * /var/www/html/
+                ''' 
             }
         }
+
+      post {
+        success {
+          echo 'Website Deployed Successfully!'
+        }
+        failure {
+          echo 'Deployment failed!'
+        }
+      }
+
+     
+
     }
 }
 
